@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Diary</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 80%;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+form label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+form input, form textarea, form button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+form button {
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #4cae4c;
+}
+
+#entries {
+    margin-top: 20px;
+}
+
+.entry {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.entry:last-child {
+    border-bottom: none;
+}
+
+</style>
+
+<body>
+    <div class="container">
+        <h1>珮珮小豬日記</h1>
+        <form id="diaryForm">
+            <label for="diaryDate">日期:</label>
+            <input type="date" id="diaryDate" name="diaryDate" required>
+  
+            <label for="diaryMood">心情:</label>
+            <input type="text" id="diaryMood" name="diaryMood" placeholder="😊" required>
+
+            <label for="diaryEntry">日記內容:</label>
+            <textarea id="diaryEntry" name="diaryEntry" rows="4" required></textarea>
+
+            <button type="submit">提交日記</button>
+            <button id="clearButton">清空紀錄</button>
+
+        </form>
+        <div id="entries"></div>
+    </div>
+
+  <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    // 當文檔加載完成後，加載保存的日記條目
+    loadEntries();
+});
+
+document.getElementById('diaryForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    // 獲取用戶輸入
+    var diaryDate = document.getElementById('diaryDate').value;
+    var diaryMood = document.getElementById('diaryMood').value;
+    var diaryEntry = document.getElementById('diaryEntry').value;
+
+    // 保存日記條目
+    saveEntry(diaryDate, diaryMood, diaryEntry);
+
+    // 添加日記條目到頁面
+    addEntryToPage(diaryDate, diaryMood, diaryEntry);
+
+    // 清空表單
+    document.getElementById('diaryForm').reset();
+});
+
+function saveEntry(date, mood, entry) {
+    // 獲取目前所有的條目
+    var entries = JSON.parse(localStorage.getItem('diaryEntries') || '[]');
+    
+    // 添加新的條目
+    entries.push({ date, mood, entry });
+
+    // 保存更新後的條目回localStorage
+    localStorage.setItem('diaryEntries', JSON.stringify(entries));
+}
+
+function loadEntries() {
+    var entries = JSON.parse(localStorage.getItem('diaryEntries') || '[]');
+
+    // 加載每一條日記條目到頁面
+    entries.forEach(function(entry) {
+        addEntryToPage(entry.date, entry.mood, entry.entry);
+    });
+}
+
+function addEntryToPage(date, mood, entry) {
+    var entryDiv = document.createElement('div');
+    entryDiv.classList.add('entry');
+    entryDiv.innerHTML = '<p><strong>日期:</strong> ' + date + '</p>' +
+                         '<p><strong>心情:</strong> ' + mood + '</p>' +
+                         '<p><strong>內容:</strong> ' + entry + '</p>';
+    document.getElementById('entries').appendChild(entryDiv);
+    function clearEntries() {
+    // 清除頁面上的條目
+    document.getElementById('entries').innerHTML = '';
+
+    // 清除 localStorage 中的條目
+    localStorage.removeItem('diaryEntries');
+}
+
+// 這個函數可以綁定到一個按鈕的點擊事件上
+document.getElementById('clearButton').addEventListener('click', clearEntries);
+function clearEntries() {
+    // 確認對話框
+    var confirmClear = confirm("您確定要清空所有日記記錄嗎？這個操作不能撤銷。");
+
+    // 如果用戶確認清空
+    if (confirmClear) {
+        // 清除頁面上的條目
+        document.getElementById('entries').innerHTML = '';
+
+        // 清除 localStorage 中的條目
+        localStorage.removeItem('diaryEntries');
+    }
+}
+
+// 假設您已經有了一個id為'clearButton'的按鈕
+document.getElementById('clearButton').addEventListener('click', clearEntries);
+
+}
+
+
+    </script>
+</body>
+</html>
